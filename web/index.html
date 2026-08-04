@@ -36,7 +36,7 @@
       </header>
 
       <section class="metrics" aria-label="Resumen">
-        <article class="metric primary-metric"><span>Contratos vigentes</span><strong id="totalMetric">—</strong><small>en el conjunto actual</small></article>
+        <article class="metric primary-metric"><span>Plazos abiertos</span><strong id="totalMetric">—</strong><small>aceptan cotizaciones</small></article>
         <article class="metric"><span>Nuevos</span><strong class="success" id="newMetric">—</strong><small>desde el último seed</small></article>
         <article class="metric"><span>Vencen en 24 h</span><strong class="warning" id="urgentMetric">—</strong><small>requieren atención</small></article>
         <article class="metric"><span>Entidades</span><strong id="entityMetric">—</strong><small>con oportunidades</small></article>
@@ -52,7 +52,7 @@
         <div class="section-heading table-heading"><div><p class="eyebrow">DIRECTORIO ACTUAL</p><h2 id="contractsTitle">Contrataciones</h2></div><span id="resultCount" class="result-count"></span></div>
         <form class="filters" id="filterForm" role="search">
           <label class="search-field"><span class="sr-only">Buscar</span><input id="searchInput" type="search" placeholder="Buscar código, descripción o entidad…"></label>
-          <label><span class="sr-only">Estado</span><select id="statusFilter"><option value="">Todos los estados</option><option value="vigente">Vigente</option><option value="vencido">Vencido</option></select></label>
+          <label><span class="sr-only">Estado del plazo</span><select id="statusFilter"><option value="open" selected>Plazo abierto</option><option value="expired">Plazo vencido</option><option value="">Todos los plazos</option></select></label>
           <label><span class="sr-only">Provincia</span><select id="provinceFilter"><option value="">Todas las provincias</option></select></label>
           <label class="check"><input id="urgentFilter" type="checkbox"> Vencen en 24 h</label>
           <button class="text-button" id="clearFilters" type="button">Limpiar</button>

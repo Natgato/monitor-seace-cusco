@@ -120,7 +120,7 @@ export class DashboardView {
     const row = this.document.createElement('tr');
     const hours = contract.hoursRemaining(dashboard.reference);
     row.append(
-      cell(pill(contract, hours)),
+      cell(pill(contract, hours, dashboard.reference)),
       cell(element('span','mono',contract.code)),
       cell(contractTitle(contract)),
       cell(element('span','mono',formatDate(contract.expiresAt))),
@@ -157,6 +157,6 @@ function cell(content){ const node=element('td'); node.append(content instanceof
 function option(value,label){ const node=element('option','',label); node.value=value; return node; }
 function formatDate(value){ return value ? DATE.format(value) : 'No informada'; }
 function remaining(contract,reference){ const hours=contract.hoursRemaining(reference); if(hours===null) return 'No informado'; if(hours<0) return 'Vencido'; if(hours<1) return 'Menos de 1 h'; const total=Math.floor(hours),days=Math.floor(total/24); return days ? `${days} d, ${total%24} h` : `${total} h`; }
-function pill(contract,hours){ const cls=!contract.isActive()?'red':hours!==null&&hours<=24?'amber':'green'; return element('span',`pill ${cls}`,contract.status); }
+function pill(contract,hours,reference){ const cls=contract.isExpired(reference)||!contract.isActive()?'red':hours!==null&&hours<=24?'amber':'green'; return element('span',`pill ${cls}`,contract.effectiveStatus(reference)); }
 function contractTitle(contract){ const wrapper=element('div','contract-title'); wrapper.append(element('strong','',contract.description),element('small','',contract.entity)); return wrapper; }
 function action(id){ const button=element('button','row-action','Ver detalle →'); button.type='button'; button.dataset.contractId=id; return button; }

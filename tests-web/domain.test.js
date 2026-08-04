@@ -13,11 +13,18 @@ const contract = new Contract({
 
 test('la entidad calcula vencimientos sin depender de la vista', () => {
   assert.equal(contract.isActive(), true);
+  assert.equal(contract.isOpen(reference), true);
   assert.equal(contract.expiresWithin(24, reference), true);
 });
 
+test('el estado efectivo no confunde Vigente de SEACE con un plazo vencido', () => {
+  const expired = new Contract({ idContrato: '2', estado: 'Vigente', fecha_vencimiento: '2026-08-04T20:00:00-05:00' });
+  assert.equal(expired.isOpen(reference), false);
+  assert.equal(expired.effectiveStatus(reference), 'Plazo vencido');
+});
+
 test('el caso de uso filtra texto sin depender de tildes', () => {
-  const result = new FilterContracts().execute([contract], { query: 'adquisicion', status: '', province: '', urgentOnly: false }, reference);
+  const result = new FilterContracts().execute([contract], { query: 'adquisicion', status: 'open', province: '', urgentOnly: false }, reference);
   assert.equal(result.length, 1);
 });
 

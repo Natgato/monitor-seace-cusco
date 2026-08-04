@@ -26,6 +26,9 @@ export class Contract {
   isActive() { return this.status.toLocaleLowerCase('es').includes('vigente'); }
   hoursRemaining(reference = new Date()) { return this.expiresAt ? (this.expiresAt - reference) / 3_600_000 : null; }
   expiresWithin(hours, reference = new Date()) { const value = this.hoursRemaining(reference); return value !== null && value >= 0 && value <= hours; }
+  isExpired(reference = new Date()) { const value = this.hoursRemaining(reference); return value !== null && value < 0; }
+  isOpen(reference = new Date()) { return this.isActive() && !this.isExpired(reference); }
+  effectiveStatus(reference = new Date()) { return this.isExpired(reference) ? 'Plazo vencido' : this.status; }
   matches(text) {
     const query = normalize(text);
     return !query || normalize([this.code, this.description, this.entity, this.province, this.district, this.objectType].join(' ')).includes(query);

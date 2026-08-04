@@ -7,7 +7,7 @@ export class LoadDashboard {
       this.repository.getMonitorState(),
     ]);
     const reference = this.clock();
-    const active = contracts.filter(contract => contract.isActive());
+    const active = contracts.filter(contract => contract.isOpen(reference));
     const itemCount = new Map();
     for (const item of items) itemCount.set(item.contractId, (itemCount.get(item.contractId) || 0) + 1);
     return {
