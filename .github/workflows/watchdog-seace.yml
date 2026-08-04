@@ -1,7 +1,8 @@
 name: Watchdog SEACE
 on:
   schedule:
-    - cron: '0 */4 * * *'
+    - cron: '37 */4 * * *'
+      timezone: America/Lima
   workflow_dispatch:
 permissions:
   contents: write

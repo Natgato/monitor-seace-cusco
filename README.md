@@ -14,6 +14,7 @@ Las notificaciones están desactivadas por defecto. El canal recomendado es Gmai
 1. Activa la verificación en dos pasos de la cuenta remitente y crea una contraseña de aplicación.
 2. Crea los Secrets `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD` y `ALERT_EMAIL_TO`.
 3. Crea la variable de repositorio `NOTIFICATION_CHANNEL=gmail`.
+4. Ejecuta **Actions → Probar correo → Run workflow**. Esta prueba no consulta SEACE.
 
 El monitor se ejecuta una vez por hora, al minuto 17. `workflow_dispatch` permite una ejecución manual adicional únicamente cuando el usuario la solicita.
 
