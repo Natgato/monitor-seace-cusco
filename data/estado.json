@@ -1,0 +1,12 @@
+{
+  "initialized": false,
+  "contratos_conocidos": [],
+  "fecha_seed": null,
+  "ultima_ejecucion": null,
+  "ultima_ejecucion_exitosa": null,
+  "ultimo_error": null,
+  "fallos_consecutivos": 0,
+  "total_contratos": 0,
+  "fecha_ultima_notificacion": null,
+  "fecha_ultima_alerta_watchdog": null
+}
