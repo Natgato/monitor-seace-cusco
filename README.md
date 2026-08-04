@@ -1,12 +1,15 @@
 # Monitor SEACE Cusco
 
-Monitor horario de contrataciones vigentes de Cusco en SEACE. Guarda un CSV actualizado y avisa por Telegram únicamente por contrataciones nuevas. No usa autenticación, navegador ni descarga documentos.
+Monitor horario de contrataciones vigentes de Cusco en SEACE. Guarda CSV actualizados y ofrece un panel para consultar oportunidades. No usa autenticación, navegador ni descarga documentos.
+
+El panel en `web/` presenta métricas, radar de vencimientos, filtros, detalle de ítems y un asistente local. Su lógica sigue arquitectura limpia; consulta [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Configuración de GitHub
 
 1. En **Settings → Actions → General**, selecciona **Read and write permissions**.
-2. En **Settings → Secrets and variables → Actions**, crea `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID`.
-3. Ejecuta **Actions → Monitor SEACE → Run workflow**. La primera ejecución crea el seed y manda un único aviso de inicialización.
+2. Ejecuta **Actions → Monitor SEACE → Run workflow**. La primera ejecución crea el seed.
+
+Telegram está desactivado por defecto. Para activarlo después, crea `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID` como Secrets y `NOTIFICATIONS_ENABLED=true` como variable del repositorio.
 
 Después se ejecuta aproximadamente cada hora. Las horas guardadas usan `America/Lima` (UTC-5). El cron de GitHub puede retrasarse algunos minutos.
 
@@ -23,3 +26,9 @@ python -m seace_monitor.monitor
 ```
 
 Datos persistentes: `data/contrataciones.csv`, `data/items.csv` y `data/estado.json`. Los CSV se escriben de forma atómica, con UTF-8 BOM y upsert por contrato/ítem.
+
+## Panel web local
+
+Desde la raíz ejecuta `python -m http.server 8000` y abre `http://localhost:8000/web/`. El panel lee los archivos de `data/` y no contiene contrataciones simuladas.
+
+Pruebas del panel: `npm run test:web`.

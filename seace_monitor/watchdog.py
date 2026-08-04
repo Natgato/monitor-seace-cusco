@@ -11,6 +11,7 @@ from .timeutils import LIMA, iso_now, now
 
 def run() -> None:
     config, state = Config(), load_state(Config())
+    if not config.notifications_enabled: return
     if not state.get("initialized") or not state.get("ultima_ejecucion_exitosa"): return
     last_ok = datetime.fromisoformat(state["ultima_ejecucion_exitosa"]).astimezone(LIMA)
     last_alert = datetime.fromisoformat(state["fecha_ultima_alerta_watchdog"]).astimezone(LIMA) if state.get("fecha_ultima_alerta_watchdog") else None

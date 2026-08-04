@@ -8,5 +8,6 @@
   "fallos_consecutivos": 0,
   "total_contratos": 0,
   "fecha_ultima_notificacion": null,
-  "fecha_ultima_alerta_watchdog": null
+  "fecha_ultima_alerta_watchdog": null,
+  "ultimos_contratos_nuevos": []
 }

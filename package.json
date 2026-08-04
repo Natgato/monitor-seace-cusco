@@ -1,0 +1,8 @@
+{
+  "name": "monitor-seace-cusco",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:web": "node --test tests-web/domain.test.js"
+  }
+}

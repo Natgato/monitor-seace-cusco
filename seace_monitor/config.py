@@ -16,6 +16,13 @@ def _decimal(name: str, default: float) -> float:
     return float(os.getenv(name, str(default)))
 
 
+def _boolean(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class Config:
     year: int = _integer("SEACE_YEAR", 2026)
@@ -25,6 +32,7 @@ class Config:
     connect_timeout: int = _integer("SEACE_CONNECT_TIMEOUT", 15)
     read_timeout: int = _integer("SEACE_READ_TIMEOUT", 30)
     watchdog_threshold_hours: int = _integer("WATCHDOG_THRESHOLD_HOURS", 3)
+    notifications_enabled: bool = _boolean("NOTIFICATIONS_ENABLED", False)
     telegram_token: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
     telegram_chat_id: str | None = os.getenv("TELEGRAM_CHAT_ID")
     state_path: Path = ROOT / "data" / "estado.json"

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Panel de seguimiento de contrataciones públicas de Cusco">
+  <title>SEACE Monitor Cusco</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./extras.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true"></span><span>SEACE Monitor</span></div>
+      <nav aria-label="Navegación principal">
+        <a class="nav-link active" href="#inicio">Inicio</a>
+        <a class="nav-link" href="#contrataciones">Contrataciones</a>
+        <a class="nav-link" href="#items">Ítems</a>
+        <a class="nav-link" href="#actividad">Actividad</a>
+      </nav>
+      <div class="system-status"><span class="status-dot" id="statusDot"></span><span id="statusLabel">Cargando estado…</span></div>
+    </aside>
+
+    <main class="content" id="mainContent">
+      <header class="topbar">
+        <button class="icon-button menu-button" id="menuButton" type="button" aria-label="Abrir navegación" aria-expanded="false">☰</button>
+        <div>
+          <p class="eyebrow">CUSCO · CONTRATACIONES PÚBLICAS</p>
+          <h1>Oportunidades vigentes</h1>
+          <p class="last-update" id="lastUpdate">Leyendo datos del monitor…</p>
+        </div>
+        <button class="button secondary" id="reloadButton" type="button">Actualizar datos</button>
+      </header>
+
+      <section class="metrics" aria-label="Resumen">
+        <article class="metric primary-metric"><span>Contratos vigentes</span><strong id="totalMetric">—</strong><small>en el conjunto actual</small></article>
+        <article class="metric"><span>Nuevos</span><strong class="success" id="newMetric">—</strong><small>desde el último seed</small></article>
+        <article class="metric"><span>Vencen en 24 h</span><strong class="warning" id="urgentMetric">—</strong><small>requieren atención</small></article>
+        <article class="metric"><span>Entidades</span><strong id="entityMetric">—</strong><small>con oportunidades</small></article>
+      </section>
+
+      <section class="radar-card" aria-labelledby="radarTitle">
+        <div class="section-heading"><div><p class="eyebrow">PRÓXIMAS 72 HORAS</p><h2 id="radarTitle">Radar de vencimientos</h2></div><span class="legend"><i></i> Cada marca es una contratación</span></div>
+        <div class="radar-labels" aria-hidden="true"><span>Ahora</span><span>24 h</span><span>48 h</span><span>72 h</span></div>
+        <div class="radar-track" id="radarTrack" role="list" aria-label="Contratos próximos a vencer"></div>
+      </section>
+
+      <section id="contrataciones" aria-labelledby="contractsTitle">
+        <div class="section-heading table-heading"><div><p class="eyebrow">DIRECTORIO ACTUAL</p><h2 id="contractsTitle">Contrataciones</h2></div><span id="resultCount" class="result-count"></span></div>
+        <form class="filters" id="filterForm" role="search">
+          <label class="search-field"><span class="sr-only">Buscar</span><input id="searchInput" type="search" placeholder="Buscar código, descripción o entidad…"></label>
+          <label><span class="sr-only">Estado</span><select id="statusFilter"><option value="">Todos los estados</option><option value="vigente">Vigente</option><option value="vencido">Vencido</option></select></label>
+          <label><span class="sr-only">Provincia</span><select id="provinceFilter"><option value="">Todas las provincias</option></select></label>
+          <label class="check"><input id="urgentFilter" type="checkbox"> Vencen en 24 h</label>
+          <button class="text-button" id="clearFilters" type="button">Limpiar</button>
+        </form>
+
+        <div class="data-panel" id="dataPanel" aria-live="polite">
+          <div class="loading-state" id="loadingState"><span class="spinner"></span><p>Preparando contrataciones…</p></div>
+          <div class="empty-state hidden" id="emptyState"><span class="empty-mark" aria-hidden="true"></span><h3>No hay resultados</h3><p>Ajusta los filtros o ejecuta el monitor por primera vez.</p></div>
+          <div class="error-state hidden" id="errorState"><h3>No pudimos leer los datos</h3><p id="errorMessage"></p><button class="button secondary" id="retryButton" type="button">Reintentar</button></div>
+          <div class="table-scroll hidden" id="tableContainer">
+            <table>
+              <thead><tr><th>Estado</th><th>Código</th><th>Contratación</th><th>Vencimiento</th><th>Tiempo restante</th><th>Ítems</th><th><span class="sr-only">Acciones</span></th></tr></thead>
+              <tbody id="contractRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside class="assistant" id="assistantPanel" aria-label="Asistente de consulta">
+      <header><div><p class="eyebrow">CONSULTA LOCAL</p><h2>Asistente SEACE</h2></div><button class="icon-button" id="closeAssistant" type="button" aria-label="Cerrar asistente">×</button></header>
+      <div class="assistant-body" id="assistantMessages" aria-live="polite">
+        <div class="assistant-message">Puedo buscar dentro de las contrataciones recopiladas. Prueba con una entidad, una provincia o un tipo de producto.</div>
+        <div class="suggestions">
+          <button type="button" data-query="¿Qué vence en 24 horas?">¿Qué vence en 24 horas?</button>
+          <button type="button" data-query="Contratos de materiales">Contratos de materiales</button>
+          <button type="button" data-query="Entidades con más contratos">Entidades con más contratos</button>
+        </div>
+      </div>
+      <form class="assistant-form" id="assistantForm"><label class="sr-only" for="assistantInput">Pregunta</label><input id="assistantInput" autocomplete="off" placeholder="Pregunta sobre los datos…"><button type="submit" aria-label="Enviar consulta">↑</button></form>
+    </aside>
+  </div>
+
+  <button class="assistant-fab" id="assistantButton" type="button" aria-label="Abrir asistente">✦</button>
+
+  <dialog class="detail-dialog" id="detailDialog">
+    <div class="dialog-head"><div><p class="eyebrow">DETALLE DE CONTRATACIÓN</p><h2 id="detailCode"></h2></div><button class="icon-button" id="closeDetail" type="button" aria-label="Cerrar detalle">×</button></div>
+    <div id="detailContent"></div>
+  </dialog>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

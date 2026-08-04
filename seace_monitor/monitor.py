@@ -54,14 +54,15 @@ def run() -> None:
     config, stamp = Config(), iso_now()
     state = load_state(config)
     try:
-        listings = SeaceClient(config).fetch_all() # no writes until pagination succeeds
+        client = SeaceClient(config)
+        listings = client.fetch_all() # no writes until pagination succeeds
         existing_rows = {row["idContrato"]: row for row in read_csv(config.contracts_path)}
         existing_items = read_csv(config.items_path)
         rows, changed_ids, details = dict(existing_rows), set(), {}
         for listing in listings:
             contract_id = str(listing["idContrato"])
             if changed(listing, existing_rows.get(contract_id)):
-                details[contract_id] = SeaceClient(config).detail(contract_id)
+                details[contract_id] = client.detail(contract_id)
                 rows[contract_id] = contract_row(listing, details[contract_id], stamp)
                 changed_ids.add(contract_id)
             else:
@@ -79,16 +80,21 @@ def run() -> None:
             write_csv(config.items_path, ITEM_FIELDS, all_items)
             state.update({"initialized": True, "contratos_conocidos": sorted(known | listed_ids), "fecha_seed": stamp, "ultima_ejecucion": stamp,
                 "ultima_ejecucion_exitosa": stamp, "ultimo_error": None, "fallos_consecutivos": 0, "total_contratos": len(listed_ids)})
-            send_messages(config, [f"<b>Monitor SEACE inicializado correctamente.</b>\nSe registraron {len(listed_ids)} contrataciones vigentes de Cusco.\nDesde la próxima ejecución solo recibirás avisos de contrataciones nuevas."])
+            state["ultimos_contratos_nuevos"] = []
+            if config.notifications_enabled:
+                send_messages(config, [f"<b>Monitor SEACE inicializado correctamente.</b>\nSe registraron {len(listed_ids)} contrataciones vigentes de Cusco.\nDesde la próxima ejecución solo recibirás avisos de contrataciones nuevas."])
             save_state(config, state); return
         # Send before state/CSV persistence: notification errors leave all data untouched for retry.
-        if new_rows: send_messages(config, build_messages(new_rows, stamp))
+        if new_rows and config.notifications_enabled:
+            send_messages(config, build_messages(new_rows, stamp))
         write_csv(config.contracts_path, CONTRACT_FIELDS, sorted(rows.values(), key=lambda x: x.get("fecha_publicacion") or "", reverse=True))
         all_items = [x for x in existing_items if x["idContrato"] in listed_ids and x["idContrato"] not in changed_ids]
         all_items.extend(row for cid, detail in details.items() for row in item_rows(cid, detail, stamp))
         write_csv(config.items_path, ITEM_FIELDS, all_items)
         state.update({"contratos_conocidos": sorted(known | listed_ids), "ultima_ejecucion": stamp, "ultima_ejecucion_exitosa": stamp,
-            "ultimo_error": None, "fallos_consecutivos": 0, "total_contratos": len(listed_ids), "fecha_ultima_notificacion": stamp if new_rows else state.get("fecha_ultima_notificacion")})
+            "ultimo_error": None, "fallos_consecutivos": 0, "total_contratos": len(listed_ids),
+            "fecha_ultima_notificacion": stamp if new_rows and config.notifications_enabled else state.get("fecha_ultima_notificacion")})
+        state["ultimos_contratos_nuevos"] = sorted(new_ids)
         save_state(config, state)
     except Exception as exc:
         LOG.exception("Ejecución fallida")
