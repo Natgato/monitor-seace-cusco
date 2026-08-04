@@ -176,11 +176,11 @@
     "84858"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion_exitosa": "2026-08-04T15:56:30-05:00",
+  "ultima_ejecucion": "2026-08-04T15:58:22-05:00",
+  "ultima_ejecucion_exitosa": "2026-08-04T15:58:22-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
-  "total_contratos": 173,
+  "total_contratos": 169,
   "fecha_ultima_notificacion": null,
   "fecha_ultima_alerta_watchdog": null,
   "ultimos_contratos_nuevos": []
