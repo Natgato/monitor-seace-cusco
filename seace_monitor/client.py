@@ -6,12 +6,20 @@ from typing import Any
 import requests
 
 from .config import Config
+from .timeutils import parse_seace
 
 BASE = "https://prod6.seace.gob.pe/v1/s8uit-services/buscadorpublico"
 
 
 class SeaceError(RuntimeError):
     pass
+
+
+def belongs_to_year(item: dict[str, Any], year: int) -> bool:
+    published = parse_seace(item.get("fecPublica"))
+    if published is None:
+        raise SeaceError(f"Contrato {item.get('idContrato', '?')} sin fecha de publicación válida")
+    return published.year == year
 
 
 class SeaceClient:
@@ -61,6 +69,8 @@ class SeaceClient:
             for item in data:
                 if not isinstance(item, dict) or item.get("idContrato") is None:
                     raise SeaceError("Contrato sin idContrato en respuesta del buscador")
+                if not belongs_to_year(item, self.config.year):
+                    continue
                 key = str(item["idContrato"])
                 if key not in seen:
                     seen.add(key)
