@@ -209,15 +209,16 @@
     "84858",
     "84860",
     "84861",
-    "84862"
+    "84862",
+    "84938"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-08-04T17:25:27-05:00",
-  "ultima_ejecucion_exitosa": "2026-08-04T17:25:27-05:00",
+  "ultima_ejecucion": "2026-08-04T18:17:33-05:00",
+  "ultima_ejecucion_exitosa": "2026-08-04T18:17:33-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
   "total_contratos": 206,
-  "fecha_ultima_notificacion": null,
+  "fecha_ultima_notificacion": "2026-08-04T18:17:33-05:00",
   "fecha_ultima_alerta_watchdog": null,
   "departamentos_inicializados": [
     "APURIMAC",
