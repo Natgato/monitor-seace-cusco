@@ -29,7 +29,7 @@ def _atomic(path: Path, content: str, encoding: str = "utf-8") -> None:
 def load_state(config: Config) -> dict[str, Any]:
     defaults = {"initialized": False, "contratos_conocidos": [], "fecha_seed": None, "ultima_ejecucion": None,
         "ultima_ejecucion_exitosa": None, "ultimo_error": None, "fallos_consecutivos": 0, "total_contratos": 0,
-        "fecha_ultima_notificacion": None, "fecha_ultima_alerta_watchdog": None}
+        "fecha_ultima_notificacion": None, "fecha_ultima_alerta_watchdog": None, "departamentos_inicializados": []}
     defaults["ultimos_contratos_nuevos"] = []
     try:
         loaded = json.loads(config.state_path.read_text(encoding="utf-8"))
@@ -37,6 +37,9 @@ def load_state(config: Config) -> dict[str, Any]:
         defaults.update(loaded)
     except (FileNotFoundError, ValueError, json.JSONDecodeError):
         pass
+    if defaults["initialized"] and not defaults["departamentos_inicializados"]:
+        # Migración del monitor original, que solamente cubría Cusco.
+        defaults["departamentos_inicializados"] = ["CUSCO"]
     return defaults
 
 
@@ -53,7 +56,12 @@ def read_csv(path: Path) -> list[dict[str, str]]:
 def write_csv(path: Path, fields: list[str], rows: list[dict[str, Any]]) -> None:
     import io
     output = io.StringIO(newline="")
-    writer = csv.DictWriter(output, fieldnames=fields, extrasaction="ignore")
+    writer = csv.DictWriter(output, fieldnames=fields, extrasaction="ignore", lineterminator="\n")
     writer.writeheader()
-    writer.writerows([{field: "" if row.get(field) is None else row.get(field) for field in fields} for row in rows])
+    def clean(value: Any) -> Any:
+        if value is None:
+            return ""
+        return value.strip() if isinstance(value, str) else value
+
+    writer.writerows([{field: clean(row.get(field)) for field in fields} for row in rows])
     _atomic(path, output.getvalue(), encoding="utf-8-sig")

@@ -23,6 +23,19 @@ def _boolean(name: str, default: bool) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _departments(value: str | None = None) -> tuple[tuple[int, str], ...]:
+    raw = value if value is not None else os.getenv("SEACE_DEPARTMENTS", "8:CUSCO,3:APURIMAC")
+    departments: list[tuple[int, str]] = []
+    for entry in raw.split(","):
+        code, separator, name = entry.strip().partition(":")
+        if not separator or not code.isdigit() or not name.strip():
+            raise ValueError("SEACE_DEPARTMENTS debe usar el formato 8:CUSCO,3:APURIMAC")
+        departments.append((int(code), name.strip().upper()))
+    if not departments:
+        raise ValueError("SEACE_DEPARTMENTS debe contener al menos un departamento")
+    return tuple(departments)
+
+
 @dataclass(frozen=True)
 class Config:
     year: int = _integer("SEACE_YEAR", 2026)
@@ -32,6 +45,7 @@ class Config:
     connect_timeout: int = _integer("SEACE_CONNECT_TIMEOUT", 15)
     read_timeout: int = _integer("SEACE_READ_TIMEOUT", 30)
     watchdog_threshold_hours: int = _integer("WATCHDOG_THRESHOLD_HOURS", 3)
+    departments: tuple[tuple[int, str], ...] = _departments()
     notification_channel: str = os.getenv("NOTIFICATION_CHANNEL", "none").strip().lower()
     telegram_token: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
     telegram_chat_id: str | None = os.getenv("TELEGRAM_CHAT_ID")

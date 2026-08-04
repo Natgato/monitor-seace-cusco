@@ -19,3 +19,10 @@ class StorageTests(unittest.TestCase):
             self.assertFalse(path.read_bytes().startswith(b"\xef\xbb\xbf"))
             self.assertTrue(load_state(config)["initialized"])
             json.loads(path.read_text(encoding="utf-8"))
+
+    def test_migrates_old_initialized_state_as_cusco_only(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "estado.json"
+            path.write_text('{"initialized": true, "contratos_conocidos": []}', encoding="utf-8")
+            config = replace(Config(), state_path=path)
+            self.assertEqual(load_state(config)["departamentos_inicializados"], ["CUSCO"])

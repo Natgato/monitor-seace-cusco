@@ -1,0 +1,26 @@
+name: Resumen diario por correo
+on:
+  schedule:
+    - cron: '5 7 * * *'
+      timezone: America/Lima
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: pip install -r requirements.txt
+      - name: Enviar resumen profesional
+        run: python -m seace_monitor.daily_digest
+        env:
+          NOTIFICATION_CHANNEL: gmail
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          ALERT_EMAIL_TO: ${{ secrets.ALERT_EMAIL_TO }}
+          TZ: America/Lima
