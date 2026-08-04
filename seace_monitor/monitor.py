@@ -72,6 +72,7 @@ def run() -> None:
         known = {str(value) for value in state["contratos_conocidos"]}
         new_ids = listed_ids - known
         new_rows = [rows[key] for key in sorted(new_ids)]
+        LOG.info("Peticiones SEACE: listado=%s detalle=%s intentos_http=%s", client.search_requests, client.detail_requests, client.http_attempts)
         if not state["initialized"]:
             # Seed never sends individual alerts.
             write_csv(config.contracts_path, CONTRACT_FIELDS, sorted(rows.values(), key=lambda x: x.get("fecha_publicacion") or "", reverse=True))

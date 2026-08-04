@@ -17,7 +17,7 @@ def run() -> None:
     last_alert = datetime.fromisoformat(state["fecha_ultima_alerta_watchdog"]).astimezone(LIMA) if state.get("fecha_ultima_alerta_watchdog") else None
     threshold = timedelta(hours=config.watchdog_threshold_hours)
     if now() - last_ok > threshold and (not last_alert or now() - last_alert > threshold):
-        send_messages(config, [f"<b>Alerta watchdog SEACE</b>\nEl monitor no registra una ejecución exitosa desde {state['ultima_ejecucion_exitosa']}."])
+        send_messages(config, [f"<b>Alerta watchdog SEACE</b>\nEl monitor no registra una ejecución exitosa desde {state['ultima_ejecucion_exitosa']}."], subject="Alerta — monitor SEACE sin ejecuciones exitosas")
         state["fecha_ultima_alerta_watchdog"] = iso_now(); save_state(config, state)
 
 

@@ -25,6 +25,9 @@ def belongs_to_year(item: dict[str, Any], year: int) -> bool:
 class SeaceClient:
     def __init__(self, config: Config):
         self.config = config
+        self.http_attempts = 0
+        self.search_requests = 0
+        self.detail_requests = 0
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json", "User-Agent": "monitor-seace-cusco/1.0"})
 
@@ -32,6 +35,7 @@ class SeaceClient:
         last_error: Exception | None = None
         for attempt in range(3):
             try:
+                self.http_attempts += 1
                 response = self.session.get(f"{BASE}/{path}", params=params, timeout=(self.config.connect_timeout, self.config.read_timeout))
                 if response.status_code == 429 or response.status_code >= 500:
                     raise SeaceError(f"HTTP {response.status_code}")
@@ -49,6 +53,7 @@ class SeaceClient:
         raise SeaceError(f"No se pudo consultar SEACE: {last_error}")
 
     def search_page(self, page: int) -> dict[str, Any]:
+        self.search_requests += 1
         return self._get("contrataciones/buscador", {"codigo_departamento": 8, "lista_estado_contrato": 2,
             "lista_codigo_objeto": "1,2", "palabra_clave": "", "orden": 2, "page": page,
             "page_size": self.config.page_size, "anio": self.config.year})
@@ -81,6 +86,7 @@ class SeaceClient:
         raise SeaceError(f"Se alcanzó el máximo de {self.config.max_pages} páginas")
 
     def detail(self, contract_id: str) -> dict[str, Any]:
+        self.detail_requests += 1
         payload = self._get("contrataciones/listar-completo", {"id_contrato": contract_id})
         if not isinstance(payload.get("uitContratoCompletoProjection"), dict):
             raise SeaceError(f"Detalle inesperado para contrato {contract_id}")

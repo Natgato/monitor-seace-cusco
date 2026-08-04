@@ -9,7 +9,13 @@ El panel en `web/` presenta métricas, radar de vencimientos, filtros, detalle d
 1. En **Settings → Actions → General**, selecciona **Read and write permissions**.
 2. Ejecuta **Actions → Monitor SEACE → Run workflow**. La primera ejecución crea el seed.
 
-Telegram está desactivado por defecto. Para activarlo después, crea `TELEGRAM_BOT_TOKEN` y `TELEGRAM_CHAT_ID` como Secrets y `NOTIFICATIONS_ENABLED=true` como variable del repositorio.
+Las notificaciones están desactivadas por defecto. El canal recomendado es Gmail:
+
+1. Activa la verificación en dos pasos de la cuenta remitente y crea una contraseña de aplicación.
+2. Crea los Secrets `GMAIL_ADDRESS`, `GMAIL_APP_PASSWORD` y `ALERT_EMAIL_TO`.
+3. Crea la variable de repositorio `NOTIFICATION_CHANNEL=gmail`.
+
+El monitor se ejecuta una vez por hora, al minuto 17. `workflow_dispatch` permite una ejecución manual adicional únicamente cuando el usuario la solicita.
 
 Después se ejecuta aproximadamente cada hora. Las horas guardadas usan `America/Lima` (UTC-5). El cron de GitHub puede retrasarse algunos minutos.
 

@@ -32,9 +32,16 @@ class Config:
     connect_timeout: int = _integer("SEACE_CONNECT_TIMEOUT", 15)
     read_timeout: int = _integer("SEACE_READ_TIMEOUT", 30)
     watchdog_threshold_hours: int = _integer("WATCHDOG_THRESHOLD_HOURS", 3)
-    notifications_enabled: bool = _boolean("NOTIFICATIONS_ENABLED", False)
+    notification_channel: str = os.getenv("NOTIFICATION_CHANNEL", "none").strip().lower()
     telegram_token: str | None = os.getenv("TELEGRAM_BOT_TOKEN")
     telegram_chat_id: str | None = os.getenv("TELEGRAM_CHAT_ID")
+    gmail_address: str | None = os.getenv("GMAIL_ADDRESS")
+    gmail_app_password: str | None = os.getenv("GMAIL_APP_PASSWORD")
+    alert_email_to: str | None = os.getenv("ALERT_EMAIL_TO")
     state_path: Path = ROOT / "data" / "estado.json"
     contracts_path: Path = ROOT / "data" / "contrataciones.csv"
     items_path: Path = ROOT / "data" / "items.csv"
+
+    @property
+    def notifications_enabled(self) -> bool:
+        return self.notification_channel != "none"
