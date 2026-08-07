@@ -253,28 +253,29 @@
     "85513",
     "85522",
     "85529",
+    "85536",
     "85540",
-    "85545"
+    "85545",
+    "85552",
+    "85569",
+    "85578"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-08-07T15:57:01-05:00",
-  "ultima_ejecucion_exitosa": "2026-08-07T15:57:01-05:00",
+  "ultima_ejecucion": "2026-08-07T16:53:47-05:00",
+  "ultima_ejecucion_exitosa": "2026-08-07T16:53:47-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
-  "total_contratos": 208,
-  "fecha_ultima_notificacion": "2026-08-07T15:57:01-05:00",
+  "total_contratos": 209,
+  "fecha_ultima_notificacion": "2026-08-07T16:53:47-05:00",
   "fecha_ultima_alerta_watchdog": null,
   "departamentos_inicializados": [
     "APURIMAC",
     "CUSCO"
   ],
   "ultimos_contratos_nuevos": [
-    "85472",
-    "85509",
-    "85513",
-    "85522",
-    "85529",
-    "85540",
-    "85545"
+    "85536",
+    "85552",
+    "85569",
+    "85578"
   ]
 }
