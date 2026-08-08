@@ -23,4 +23,5 @@ jobs:
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ALERT_EMAIL_TO: ${{ secrets.ALERT_EMAIL_TO }}
+          REPORT_RECIPIENT_NAME: ${{ vars.REPORT_RECIPIENT_NAME || 'Suscriptor de Radar Andino' }}
           TZ: America/Lima

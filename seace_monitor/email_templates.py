@@ -53,7 +53,7 @@ h1{{font-size:25px;line-height:1.2;margin:10px 0 8px}} .intro{{color:#dbe4ec;fon
 </style></head><body><div class="wrap"><div class="card">
 <div class="header"><div class="brand">{escape(eyebrow)}</div><h1>{escape(title)}</h1><p class="intro">{escape(intro)}</p></div>
 <div class="content">{body}</div>
-<div class="footer">Monitor SEACE — Cusco y Apurímac<br>Generado el {_date_label(generated_at)} a las {generated_at.astimezone(LIMA).strftime('%I:%M %p')}. Datos obtenidos del buscador público de SEACE.</div>
+<div class="footer"><strong>Radar Andino</strong> — Inteligencia de oportunidades públicas<br>Generado el {_date_label(generated_at)} a las {generated_at.astimezone(LIMA).strftime('%I:%M %p')}. Servicio independiente; verifique las bases y cronogramas en SEACE.</div>
 </div></div></body></html>"""
 
 
@@ -118,7 +118,7 @@ def build_daily_email(
     )
     return _layout(
         "Resumen diario de oportunidades",
-        "Monitor regional SEACE",
+        "Radar Andino",
         f"Panorama de contrataciones vigentes para Cusco y Apurímac — {_date_label(generated_at)}.",
         body,
         generated_at,

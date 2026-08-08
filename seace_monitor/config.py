@@ -52,6 +52,7 @@ class Config:
     gmail_address: str | None = os.getenv("GMAIL_ADDRESS")
     gmail_app_password: str | None = os.getenv("GMAIL_APP_PASSWORD")
     alert_email_to: str | None = os.getenv("ALERT_EMAIL_TO")
+    report_recipient_name: str = os.getenv("REPORT_RECIPIENT_NAME", "Suscriptor de Radar Andino").strip()
     state_path: Path = ROOT / "data" / "estado.json"
     contracts_path: Path = ROOT / "data" / "contrataciones.csv"
     items_path: Path = ROOT / "data" / "items.csv"

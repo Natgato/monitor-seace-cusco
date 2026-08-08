@@ -8,7 +8,8 @@ from typing import Any
 
 from .config import Config
 from .email_templates import build_daily_email
-from .notifier import send_messages
+from .notifier import EmailAttachment, send_messages
+from .pdf_report import build_daily_pdf
 from .storage import read_csv
 from .timeutils import LIMA, now
 
@@ -51,13 +52,21 @@ def run() -> None:
     for item in read_csv(config.items_path):
         contract_id = str(item.get("idContrato") or "")
         item_counts[contract_id] = item_counts.get(contract_id, 0) + 1
+
     html = build_daily_email(rows, item_counts, generated_at)
+    pdf = build_daily_pdf(rows, item_counts, generated_at, config.report_recipient_name)
+    filename = f"Radar-Andino-Cusco-Apurimac-{generated_at.strftime('%Y-%m-%d')}.pdf"
     send_messages(
         config,
         [html],
-        subject=f"Resumen diario SEACE — Cusco y Apurímac — {generated_at.strftime('%d/%m/%Y')}",
+        subject=f"Radar Andino - resumen diario - {generated_at.strftime('%d/%m/%Y')}",
+        attachments=[EmailAttachment(filename=filename, content=pdf, subtype="pdf")],
     )
-    LOG.info("Resumen procesado con %s oportunidades vigentes; solicitudes SEACE=0", len(rows))
+    LOG.info(
+        "Resumen procesado con %s oportunidades vigentes; PDF=%s bytes; solicitudes SEACE=0",
+        len(rows),
+        len(pdf),
+    )
 
 
 if __name__ == "__main__":
