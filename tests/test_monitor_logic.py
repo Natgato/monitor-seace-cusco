@@ -1,7 +1,13 @@
 import unittest
+from datetime import datetime
 
 from seace_monitor.client import SeaceError
-from seace_monitor.monitor import changed, contract_row, hydrate_requirement_links
+from seace_monitor.monitor import (
+    changed,
+    contract_row,
+    hydrate_requirement_links,
+    requirement_backfill_ids,
+)
 
 
 class MonitorLogicTests(unittest.TestCase):
@@ -37,3 +43,16 @@ class MonitorLogicTests(unittest.TestCase):
         self.assertEqual(completed, 1)
         self.assertEqual(rows["1"]["requerimiento_consultado"], "1")
         self.assertNotIn("requerimiento_consultado", rows["2"])
+
+    def test_requirement_backfill_skips_expired_contracts(self):
+        reference = datetime.fromisoformat("2026-08-11T09:00:00-05:00")
+        rows = {
+            "expired": {"fecha_vencimiento": "2026-08-10T12:00:00-05:00"},
+            "open-later": {"fecha_vencimiento": "2026-08-13T12:00:00-05:00"},
+            "open-first": {"fecha_vencimiento": "2026-08-12T12:00:00-05:00"},
+            "checked": {"fecha_vencimiento": "2026-08-11T12:00:00-05:00", "requerimiento_consultado": "1"},
+        }
+
+        selected = requirement_backfill_ids(rows, set(), reference, 10)
+
+        self.assertEqual(selected, ["open-first", "open-later"])

@@ -114,6 +114,31 @@ def hydrate_requirement_links(
     return completed
 
 
+def requirement_backfill_ids(
+    rows: dict[str, dict[str, Any]],
+    excluded_ids: set[str],
+    reference: datetime,
+    limit: int,
+) -> list[str]:
+    """Prioritize open deadlines; expired contracts never consume file requests."""
+    candidates: list[str] = []
+    for contract_id, row in rows.items():
+        if contract_id in excluded_ids or _requirement_was_checked(row):
+            continue
+        raw_deadline = row.get("fecha_vencimiento")
+        if raw_deadline:
+            try:
+                if datetime.fromisoformat(str(raw_deadline)) <= reference:
+                    continue
+            except ValueError:
+                pass
+        candidates.append(contract_id)
+    return sorted(
+        candidates,
+        key=lambda contract_id: rows[contract_id].get("fecha_vencimiento") or "9999",
+    )[:max(limit, 0)]
+
+
 def _send_new_alert(config: Config, new_rows: list[dict[str, Any]], stamp: str) -> None:
     if config.notification_channel == "gmail":
         html = build_new_contracts_email(new_rows, datetime.fromisoformat(stamp))
@@ -166,14 +191,12 @@ def run() -> None:
         immediate_ids = sorted(new_ids) if state["initialized"] else []
         hydrate_requirement_links(client, rows, immediate_ids)
 
-        pending_backfill = sorted(
-            (
-                contract_id
-                for contract_id, row in rows.items()
-                if contract_id not in new_ids and not _requirement_was_checked(row)
-            ),
-            key=lambda contract_id: rows[contract_id].get("fecha_vencimiento") or "9999",
-        )[:max(config.file_backfill_limit, 0)]
+        pending_backfill = requirement_backfill_ids(
+            rows,
+            new_ids,
+            datetime.fromisoformat(stamp),
+            config.file_backfill_limit,
+        )
         backfilled = hydrate_requirement_links(client, rows, pending_backfill)
         new_rows = [rows[key] for key in sorted(new_ids)]
         LOG.info(
