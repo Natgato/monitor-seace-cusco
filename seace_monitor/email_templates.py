@@ -46,7 +46,8 @@ h1{{font-size:25px;line-height:1.2;margin:10px 0 8px}} .intro{{color:#dbe4ec;fon
 .tag{{display:inline-block;background:#e9f0f5;color:#244968;border-radius:12px;padding:4px 8px;font-size:10px;font-weight:bold;text-transform:uppercase}}
 .code{{font-size:12px;color:#80672e;font-weight:bold;margin-left:6px}} .entity{{font-size:15px;font-weight:bold;margin:9px 0 5px}}
 .description{{font-size:13px;color:#475467;line-height:1.45;margin:0 0 8px}} .meta{{font-size:12px;color:#667085;line-height:1.55}}
-.button{{display:inline-block;background:#102640;color:#fff!important;text-decoration:none;border-radius:6px;padding:9px 13px;font-size:12px;font-weight:bold;margin-top:9px}}
+.actions{{font-size:0;margin-top:9px}} .button{{display:inline-block;background:#102640;color:#fff!important;text-decoration:none;border:1px solid #102640;border-radius:6px;padding:9px 13px;font-size:12px;font-weight:bold;margin:0 8px 8px 0}}
+.button-secondary{{background:#fff;color:#102640!important}}
 .empty{{background:#f6f3ed;border-radius:8px;padding:16px;color:#667085;font-size:13px}} .note{{font-size:12px;color:#667085;line-height:1.5}}
 .footer{{background:#f6f3ed;border-top:1px solid #e4ded2;padding:19px 32px;color:#667085;font-size:11px;line-height:1.5}}
 @media(max-width:560px){{.header,.content,.footer{{padding-left:20px;padding-right:20px}} h1{{font-size:21px}}}}
@@ -59,6 +60,13 @@ h1{{font-size:25px;line-height:1.2;margin:10px 0 8px}} .intro{{color:#dbe4ec;fon
 
 def _opportunity(row: dict[str, Any], item_count: int | None = None) -> str:
     url = escape(str(row.get("enlace_publico") or "https://prod6.seace.gob.pe/buscador-publico/"), quote=True)
+    requirement_url = row.get("enlace_requerimiento")
+    requirement_button = ""
+    if requirement_url:
+        safe_requirement_url = escape(str(requirement_url), quote=True)
+        requirement_button = (
+            f'<a class="button button-secondary" href="{safe_requirement_url}">&#8595;&nbsp; Descargar requerimiento</a>'
+        )
     region = _text(row.get("departamento"), "Región")
     code = _text(row.get("codigo_contratacion"), "Sin código")
     count = item_count if item_count is not None else int(row.get("cantidad_items") or 0)
@@ -70,7 +78,7 @@ def _opportunity(row: dict[str, Any], item_count: int | None = None) -> str:
 <div class="entity">{_text(row.get('entidad'), 'Entidad no informada')}</div>
 <p class="description">{_text(row.get('descripcion'), 'Descripción no informada')}</p>
 <div class="meta">Vence: {escape(deadline)}{timing}<br>Ítems registrados: {count}</div>
-<a class="button" href="{url}">Ver oportunidad en SEACE</a></div>"""
+<div class="actions"><a class="button" href="{url}">Ver oportunidad en SEACE</a>{requirement_button}</div></div>"""
 
 
 def build_new_contracts_email(rows: list[dict[str, Any]], generated_at: datetime) -> str:

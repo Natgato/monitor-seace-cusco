@@ -19,6 +19,7 @@ class EmailTemplateTests(unittest.TestCase):
             "fecha_publicacion": "2026-08-04T06:00:00-05:00",
             "fecha_vencimiento": "2026-08-05T12:00:00-05:00",
             "enlace_publico": "https://example.com/1",
+            "enlace_requerimiento": "https://example.com/requirements/1?name=TDR&format=pdf",
             "cantidad_items": 2,
         }
 
@@ -27,12 +28,19 @@ class EmailTemplateTests(unittest.TestCase):
         self.assertIn("Alerta inmediata", html)
         self.assertIn("Municipalidad &lt;Cusco&gt;", html)
         self.assertNotIn("Municipalidad <Cusco>", html)
+        self.assertIn("Descargar requerimiento", html)
+        self.assertIn("name=TDR&amp;format=pdf", html)
 
     def test_daily_email_contains_regional_metrics(self):
         html = build_daily_email([self.row], {"1": 2}, self.moment)
         self.assertIn("Resumen diario", html)
         self.assertIn("Publicadas hoy", html)
         self.assertIn("solicitudes adicionales", html)
+        self.assertIn("Descargar requerimiento", html)
+
+    def test_omits_requirement_action_when_no_file_is_available(self):
+        html = build_new_contracts_email([self.row | {"enlace_requerimiento": ""}], self.moment)
+        self.assertNotIn("Descargar requerimiento", html)
 
     def test_daily_selection_excludes_expired_and_other_regions(self):
         expired = self.row | {"idContrato": "2", "fecha_vencimiento": "2026-08-03T12:00:00-05:00"}

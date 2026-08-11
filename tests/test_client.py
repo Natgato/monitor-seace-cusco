@@ -1,6 +1,6 @@
 import unittest
 
-from seace_monitor.client import SeaceClient, SeaceError, belongs_to_year
+from seace_monitor.client import FILES_BASE, SeaceClient, SeaceError, belongs_to_year
 from seace_monitor.config import Config
 
 
@@ -29,3 +29,30 @@ class ClientTests(unittest.TestCase):
         self.assertEqual(calls, [(1, 8), (1, 3)])
         self.assertEqual(len(records), 1)
         self.assertEqual(records[0]["_requested_department"], "CUSCO")
+
+    def test_builds_direct_requirement_download_url(self):
+        client = SeaceClient(Config())
+        calls = []
+
+        def fake_get_json(base, path, params):
+            calls.append((base, path, params))
+            return [{"idContratoArchivo": 339689, "nombre": "TDR.pdf"}]
+
+        client._get_json = fake_get_json
+        url = client.requirement_url("85929")
+
+        self.assertEqual(
+            url,
+            f"{FILES_BASE}/archivos-publico/descargar-archivo-contrato/339689",
+        )
+        self.assertEqual(
+            calls,
+            [(FILES_BASE, "archivos-publico/listar-archivos-contrato/85929/1", {})],
+        )
+        self.assertEqual(client.file_requests, 1)
+
+    def test_requirement_url_is_optional_when_seace_has_no_file(self):
+        client = SeaceClient(Config())
+        client._get_json = lambda base, path, params: []
+
+        self.assertIsNone(client.requirement_url("1"))

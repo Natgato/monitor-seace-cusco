@@ -42,6 +42,7 @@ class Config:
     max_pages: int = _integer("SEACE_MAX_PAGES", 50)
     page_size: int = _integer("SEACE_PAGE_SIZE", 50)
     page_delay_seconds: float = _decimal("SEACE_PAGE_DELAY_SECONDS", 0.7)
+    file_backfill_limit: int = _integer("SEACE_FILE_BACKFILL_LIMIT", 10)
     connect_timeout: int = _integer("SEACE_CONNECT_TIMEOUT", 15)
     read_timeout: int = _integer("SEACE_READ_TIMEOUT", 30)
     watchdog_threshold_hours: int = _integer("WATCHDOG_THRESHOLD_HOURS", 3)

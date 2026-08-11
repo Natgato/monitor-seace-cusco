@@ -9,6 +9,7 @@ from .config import Config
 from .timeutils import parse_seace
 
 BASE = "https://prod6.seace.gob.pe/v1/s8uit-services/buscadorpublico"
+FILES_BASE = "https://prod6.seace.gob.pe/v1/s8uit-services/archivo"
 
 
 class SeaceError(RuntimeError):
@@ -28,16 +29,17 @@ class SeaceClient:
         self.http_attempts = 0
         self.search_requests = 0
         self.detail_requests = 0
+        self.file_requests = 0
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json", "User-Agent": "monitor-seace-regional/1.0"})
 
-    def _get(self, path: str, params: dict[str, Any]) -> dict[str, Any]:
+    def _get_json(self, base: str, path: str, params: dict[str, Any]) -> Any:
         last_error: Exception | None = None
         for attempt in range(3):
             try:
                 self.http_attempts += 1
                 response = self.session.get(
-                    f"{BASE}/{path}",
+                    f"{base}/{path}",
                     params=params,
                     timeout=(self.config.connect_timeout, self.config.read_timeout),
                 )
@@ -46,15 +48,18 @@ class SeaceClient:
                 response.raise_for_status()
                 if "json" not in response.headers.get("Content-Type", "").lower():
                     raise SeaceError("SEACE devolvió una respuesta que no es JSON")
-                payload = response.json()
-                if not isinstance(payload, dict):
-                    raise SeaceError("SEACE devolvió un JSON con formato inesperado")
-                return payload
+                return response.json()
             except (requests.RequestException, ValueError, SeaceError) as exc:
                 last_error = exc
                 if attempt < 2:
                     time.sleep(2**attempt)
         raise SeaceError(f"No se pudo consultar SEACE: {last_error}")
+
+    def _get(self, path: str, params: dict[str, Any]) -> dict[str, Any]:
+        payload = self._get_json(BASE, path, params)
+        if not isinstance(payload, dict):
+            raise SeaceError("SEACE devolvió un JSON con formato inesperado")
+        return payload
 
     def search_page(self, page: int, department_code: int) -> dict[str, Any]:
         self.search_requests += 1
@@ -113,3 +118,20 @@ class SeaceClient:
         if not isinstance(payload.get("uitContratoItemProjectionList", []), list):
             raise SeaceError(f"Ítems inesperados para contrato {contract_id}")
         return payload
+
+    def requirement_url(self, contract_id: str) -> str | None:
+        self.file_requests += 1
+        payload = self._get_json(
+            FILES_BASE,
+            f"archivos-publico/listar-archivos-contrato/{contract_id}/1",
+            {},
+        )
+        if not isinstance(payload, list):
+            raise SeaceError(f"Archivos inesperados para contrato {contract_id}")
+        if not payload:
+            return None
+        first = payload[0]
+        if not isinstance(first, dict) or first.get("idContratoArchivo") is None:
+            raise SeaceError(f"Requerimiento inesperado para contrato {contract_id}")
+        file_id = first["idContratoArchivo"]
+        return f"{FILES_BASE}/archivos-publico/descargar-archivo-contrato/{file_id}"

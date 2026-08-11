@@ -5,7 +5,7 @@ import sys
 from datetime import datetime
 from typing import Any
 
-from .client import SeaceClient
+from .client import SeaceClient, SeaceError
 from .config import Config
 from .email_templates import build_new_contracts_email
 from .notifier import build_messages, send_messages
@@ -16,7 +16,13 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(mess
 LOG = logging.getLogger(__name__)
 
 
-def contract_row(listing: dict[str, Any], detail: dict[str, Any] | None, stamp: str) -> dict[str, Any]:
+def contract_row(
+    listing: dict[str, Any],
+    detail: dict[str, Any] | None,
+    stamp: str,
+    requirement_url: str | None = None,
+    requirement_checked: bool = False,
+) -> dict[str, Any]:
     source = (detail or {}).get("uitContratoCompletoProjection", {}) | listing
     contract_id = str(listing["idContrato"])
     finish_raw = listing.get("fecFinCotizacion") or source.get("fecFinCotizacion")
@@ -49,6 +55,8 @@ def contract_row(listing: dict[str, Any], detail: dict[str, Any] | None, stamp: 
         "monto_referencial": source.get("montoReferencial"),
         "descripcion": source.get("desObjetoContrato") or listing.get("desObjetoContrato"),
         "enlace_publico": f"https://prod6.seace.gob.pe/buscador-publico/contrataciones/{contract_id}",
+        "enlace_requerimiento": requirement_url,
+        "requerimiento_consultado": "1" if requirement_checked else "",
         "fecha_ultima_actualizacion": stamp,
         "fecha_vencimiento_raw": finish_raw,
         "cantidad_items": len(items),
@@ -85,6 +93,27 @@ def changed(listing: dict[str, Any], existing: dict[str, str] | None) -> bool:
     )
 
 
+def _requirement_was_checked(row: dict[str, Any]) -> bool:
+    return str(row.get("requerimiento_consultado") or "").strip().lower() in {"1", "true", "si", "sí"}
+
+
+def hydrate_requirement_links(
+    client: SeaceClient,
+    rows: dict[str, dict[str, Any]],
+    contract_ids: list[str],
+) -> int:
+    """Resolve optional requirement files without making them critical to the monitor run."""
+    completed = 0
+    for contract_id in contract_ids:
+        try:
+            rows[contract_id]["enlace_requerimiento"] = client.requirement_url(contract_id) or ""
+            rows[contract_id]["requerimiento_consultado"] = "1"
+            completed += 1
+        except SeaceError as exc:
+            LOG.warning("No se pudo consultar el requerimiento de %s: %s", contract_id, exc)
+    return completed
+
+
 def _send_new_alert(config: Config, new_rows: list[dict[str, Any]], stamp: str) -> None:
     if config.notification_channel == "gmail":
         html = build_new_contracts_email(new_rows, datetime.fromisoformat(stamp))
@@ -107,7 +136,14 @@ def run() -> None:
             contract_id = str(listing["idContrato"])
             if changed(listing, existing_rows.get(contract_id)):
                 details[contract_id] = client.detail(contract_id)
-                rows[contract_id] = contract_row(listing, details[contract_id], stamp)
+                existing = existing_rows.get(contract_id, {})
+                rows[contract_id] = contract_row(
+                    listing,
+                    details[contract_id],
+                    stamp,
+                    existing.get("enlace_requerimiento") or None,
+                    _requirement_was_checked(existing),
+                )
                 changed_ids.add(contract_id)
             else:
                 preserved = dict(existing_rows[contract_id])
@@ -127,11 +163,25 @@ def run() -> None:
             if str(item.get("_requested_department") or "").upper() in new_departments
         }
         new_ids = (listed_ids - known) - regional_seed_ids
+        immediate_ids = sorted(new_ids) if state["initialized"] else []
+        hydrate_requirement_links(client, rows, immediate_ids)
+
+        pending_backfill = sorted(
+            (
+                contract_id
+                for contract_id, row in rows.items()
+                if contract_id not in new_ids and not _requirement_was_checked(row)
+            ),
+            key=lambda contract_id: rows[contract_id].get("fecha_vencimiento") or "9999",
+        )[:max(config.file_backfill_limit, 0)]
+        backfilled = hydrate_requirement_links(client, rows, pending_backfill)
         new_rows = [rows[key] for key in sorted(new_ids)]
         LOG.info(
-            "Peticiones SEACE: listado=%s detalle=%s intentos_http=%s",
+            "Peticiones SEACE: listado=%s detalle=%s archivos=%s (relleno=%s) intentos_http=%s",
             client.search_requests,
             client.detail_requests,
+            client.file_requests,
+            backfilled,
             client.http_attempts,
         )
         if new_departments and state["initialized"]:

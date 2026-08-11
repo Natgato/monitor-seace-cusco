@@ -9,7 +9,7 @@ from typing import Any
 
 from .config import Config
 
-CONTRACT_FIELDS = ["idContrato", "codigo_contratacion", "estado", "objeto_contratacion", "entidad", "ruc_entidad", "departamento", "provincia", "distrito", "fecha_publicacion", "fecha_vencimiento", "tiempo_restante_texto", "moneda", "monto_referencial", "descripcion", "enlace_publico", "fecha_ultima_actualizacion", "fecha_vencimiento_raw"]
+CONTRACT_FIELDS = ["idContrato", "codigo_contratacion", "estado", "objeto_contratacion", "entidad", "ruc_entidad", "departamento", "provincia", "distrito", "fecha_publicacion", "fecha_vencimiento", "tiempo_restante_texto", "moneda", "monto_referencial", "descripcion", "enlace_publico", "enlace_requerimiento", "requerimiento_consultado", "fecha_ultima_actualizacion", "fecha_vencimiento_raw"]
 ITEM_FIELDS = ["idContrato", "idItem", "numero_item", "codigo_cubso", "descripcion_item", "cantidad", "unidad_medida", "moneda", "monto", "fecha_ultima_actualizacion"]
 
 
