@@ -340,8 +340,8 @@
     "87962"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-08-19T11:45:00-05:00",
-  "ultima_ejecucion_exitosa": "2026-08-19T11:45:00-05:00",
+  "ultima_ejecucion": "2026-08-19T12:38:36-05:00",
+  "ultima_ejecucion_exitosa": "2026-08-19T12:38:36-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
   "total_contratos": 134,
@@ -351,7 +351,5 @@
     "APURIMAC",
     "CUSCO"
   ],
-  "ultimos_contratos_nuevos": [
-    "87962"
-  ]
+  "ultimos_contratos_nuevos": []
 }
