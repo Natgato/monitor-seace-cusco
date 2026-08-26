@@ -422,24 +422,22 @@
     "89396",
     "89398",
     "89407",
-    "89408"
+    "89408",
+    "89421"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-08-25T18:35:50-05:00",
-  "ultima_ejecucion_exitosa": "2026-08-25T18:35:50-05:00",
+  "ultima_ejecucion": "2026-08-25T20:56:46-05:00",
+  "ultima_ejecucion_exitosa": "2026-08-25T20:56:46-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
   "total_contratos": 137,
-  "fecha_ultima_notificacion": "2026-08-25T18:35:50-05:00",
+  "fecha_ultima_notificacion": "2026-08-25T20:56:46-05:00",
   "fecha_ultima_alerta_watchdog": null,
   "departamentos_inicializados": [
     "APURIMAC",
     "CUSCO"
   ],
   "ultimos_contratos_nuevos": [
-    "89394",
-    "89396",
-    "89407",
-    "89408"
+    "89421"
   ]
 }
