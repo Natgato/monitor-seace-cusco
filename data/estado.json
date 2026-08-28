@@ -433,23 +433,38 @@
     "89689",
     "89717",
     "89729",
+    "89927",
     "89930",
     "90066",
     "90071",
     "90104",
-    "90115"
+    "90115",
+    "90184",
+    "90203",
+    "90206",
+    "90262",
+    "90291",
+    "90333"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-08-28T06:20:19-05:00",
-  "ultima_ejecucion_exitosa": "2026-08-28T06:20:19-05:00",
+  "ultima_ejecucion": "2026-08-28T17:16:33-05:00",
+  "ultima_ejecucion_exitosa": "2026-08-28T17:16:33-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
   "total_contratos": 121,
-  "fecha_ultima_notificacion": "2026-08-27T18:47:49-05:00",
+  "fecha_ultima_notificacion": "2026-08-28T17:16:33-05:00",
   "fecha_ultima_alerta_watchdog": "2026-08-27T18:02:18-05:00",
   "departamentos_inicializados": [
     "APURIMAC",
     "CUSCO"
   ],
-  "ultimos_contratos_nuevos": []
+  "ultimos_contratos_nuevos": [
+    "89927",
+    "90184",
+    "90203",
+    "90206",
+    "90262",
+    "90291",
+    "90333"
+  ]
 }
