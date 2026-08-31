@@ -460,7 +460,7 @@
   "fallos_consecutivos": 0,
   "total_contratos": 127,
   "fecha_ultima_notificacion": "2026-08-31T08:43:40-05:00",
-  "fecha_ultima_alerta_watchdog": "2026-08-29T09:39:27-05:00",
+  "fecha_ultima_alerta_watchdog": "2026-08-31T12:12:28-05:00",
   "departamentos_inicializados": [
     "APURIMAC",
     "CUSCO"
