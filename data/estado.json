@@ -460,11 +460,11 @@
     "90756"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-09-01T09:51:45-05:00",
-  "ultima_ejecucion_exitosa": "2026-09-01T09:51:45-05:00",
+  "ultima_ejecucion": "2026-09-01T13:28:01-05:00",
+  "ultima_ejecucion_exitosa": "2026-09-01T13:28:01-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
-  "total_contratos": 121,
+  "total_contratos": 117,
   "fecha_ultima_notificacion": "2026-09-01T00:03:53-05:00",
   "fecha_ultima_alerta_watchdog": "2026-09-01T09:15:37-05:00",
   "departamentos_inicializados": [
