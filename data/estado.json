@@ -512,11 +512,11 @@
     "92178"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-09-07T05:14:12-05:00",
-  "ultima_ejecucion_exitosa": "2026-09-07T05:14:12-05:00",
+  "ultima_ejecucion": "2026-09-07T10:50:58-05:00",
+  "ultima_ejecucion_exitosa": "2026-09-07T10:50:58-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
-  "total_contratos": 141,
+  "total_contratos": 136,
   "fecha_ultima_notificacion": "2026-09-05T13:15:42-05:00",
   "fecha_ultima_alerta_watchdog": "2026-09-07T10:10:32-05:00",
   "departamentos_inicializados": [
