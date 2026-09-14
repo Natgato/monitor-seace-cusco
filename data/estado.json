@@ -606,11 +606,11 @@
     "93941"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-09-14T07:47:58-05:00",
-  "ultima_ejecucion_exitosa": "2026-09-14T07:47:58-05:00",
+  "ultima_ejecucion": "2026-09-14T13:36:13-05:00",
+  "ultima_ejecucion_exitosa": "2026-09-14T13:36:13-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
-  "total_contratos": 152,
+  "total_contratos": 149,
   "fecha_ultima_notificacion": "2026-09-12T12:07:18-05:00",
   "fecha_ultima_alerta_watchdog": "2026-09-14T10:58:39-05:00",
   "departamentos_inicializados": [
