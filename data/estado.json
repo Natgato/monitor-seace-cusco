@@ -778,6 +778,7 @@
     "97007",
     "97025",
     "97037",
+    "97049",
     "97059",
     "97071",
     "97077",
@@ -785,23 +786,23 @@
     "97160",
     "97229",
     "97277",
-    "97286"
+    "97286",
+    "97332"
   ],
   "fecha_seed": "2026-08-04T15:56:30-05:00",
-  "ultima_ejecucion": "2026-09-25T13:33:58-05:00",
-  "ultima_ejecucion_exitosa": "2026-09-25T13:33:58-05:00",
+  "ultima_ejecucion": "2026-09-25T17:17:45-05:00",
+  "ultima_ejecucion_exitosa": "2026-09-25T17:17:45-05:00",
   "ultimo_error": null,
   "fallos_consecutivos": 0,
-  "total_contratos": 180,
-  "fecha_ultima_notificacion": "2026-09-25T13:33:58-05:00",
+  "total_contratos": 178,
+  "fecha_ultima_notificacion": "2026-09-25T17:17:45-05:00",
   "fecha_ultima_alerta_watchdog": "2026-09-25T01:31:49-05:00",
   "departamentos_inicializados": [
     "APURIMAC",
     "CUSCO"
   ],
   "ultimos_contratos_nuevos": [
-    "97229",
-    "97277",
-    "97286"
+    "97049",
+    "97332"
   ]
 }
